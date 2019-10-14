@@ -3,54 +3,81 @@ package mum.edu.cs.cs425.swe.eregistrar.controller;
 import mum.edu.cs.cs425.swe.eregistrar.Service.StudentService;
 import mum.edu.cs.cs425.swe.eregistrar.modell.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/student")
+@RequestMapping("/home")
 public class StudentController {
 
-    @GetMapping("/sign")
-    public String signUpGet(Model theModel){
-        theModel.addAttribute("signUp", new Student());
-        return "user/signUp";
-    }
-    @PostMapping("/sign")
-    public String signUpPost(@ModelAttribute("signUp") Student theUser){
-
-        return "redirect:/";
-    }
-
     @Autowired
-    private StudentService studser;
+    private StudentService studentService;
 
-    @GetMapping("/save")
-    public String saveGet(Model theModel){
-        theModel.addAttribute("toSave",new Student());
+    @RequestMapping(value = {"/view-all"})
+    public ModelAndView viewAll(@RequestParam(defaultValue = "0") int pageno){
 
-        return "student/addStudent";
+        ModelAndView modelAndView= new ModelAndView();
+        Page<Student> students=studentService.getAllStudentsPaged(pageno);
+        long numberOfStudents= students.getTotalElements();
+        modelAndView.addObject("students",students);
+        modelAndView.addObject("currPageNo",pageno);
+        modelAndView.addObject("numberOfStudents",numberOfStudents);
+        modelAndView.addObject("flashBack","/home/view-all");
+        modelAndView.setViewName("student-list");
+        return modelAndView;
+    }
+   /* SEARCH*/
+    @RequestMapping("/search")
+    public ModelAndView search(@RequestParam String search,@RequestParam(defaultValue = "0") int pageno,Model model){
+        Page<Student> students=studentService.search(search,pageno);
+        long numberOfStudents= students.getTotalElements();
+        ModelAndView modelAndView= new ModelAndView();
+        modelAndView.addObject("students",students);
+        modelAndView.addObject("currPageNo",pageno);
+        modelAndView.addObject("numberOfStudents",numberOfStudents);
+        modelAndView.addObject("flashBack","/home/search?search="+search);
+        modelAndView.setViewName("student-list");
+        return modelAndView;
     }
 
+      /*ADD NEW STUDENT*/
+    @RequestMapping("/add-new-student")
+    public String addStudent(Model model){
 
-    @GetMapping("/list")
-    public String list(Model theModel){
-        theModel.addAttribute("allStudent",studser.allStudent());
-        return "student/listStudentTable";
+
+        model.addAttribute("student",new Student());
+
+
+        return "add-new-student";
     }
-    @GetMapping("/edit")
-    public String editGet(@RequestParam("carId") Long carId, Model theModel){
-
-        theModel.addAttribute("toSave",studser.findById(carId));
-
-        return "car/editCar";
+    @RequestMapping("/save")
+    public String save(@Valid @ModelAttribute Student student, BindingResult result){
+        if(result.hasErrors())
+            return "add-new-student";
+        studentService.saveStudent(student);
+        return "redirect:view-all";
     }
-    @PostMapping("/edit")
-    public String editPost(@ModelAttribute("toSave") Student theCar){
-        theCar.setId(theCar.getId());
 
-        studser.save(theCar);
-        return "redirect:/student/list";
+    @RequestMapping("/showFormForUpdate")
+    public String showFormForUpdate(@RequestParam("studentId") Long id,Model model){
+        Student student= studentService.findById(id);
+        model.addAttribute("student",student);
+        return "add-new-student";
+    }
+
+   /* DELETE A STUDENT FROM THE LIST*/
+    @RequestMapping("/deleteStudent")
+    public RedirectView delete(@RequestParam("studentId") Long id, Model model){
+        studentService.deleteStudent(id);
+
+        return new RedirectView("view-all", true);
     }
 
 }

@@ -1,61 +1,73 @@
 package mum.edu.cs.cs425.swe.eregistrar.modell;
 
 import org.hibernate.engine.internal.Cascade;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Entity(name = "students")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
-    @Column(name = "Student_id")
-
-    private Long id;
-    @Column(name ="student_Number", nullable = false)
-    private  int studentNumber;
-    @Column(name ="first_Name", nullable = false)
+    private Long studentId;
+    @NotBlank(message = "Student number can not be blank")
+    @Column(nullable = false)
+    private String studentNo;
+    @NotBlank(message = "First name can not be blank")
     private String firstName;
-    @Column(name ="middle_Name", nullable = false)
     private String middleName;
-    @Column(name ="last_Name", nullable = false)
-    private String laastName;
-    @Column(name ="middle_Name", nullable = false)
-    private Double gpa;
-    @Column(name ="middle_Name", nullable = false)
+    @NotBlank(message = "Last Name can not be blank")
+    private String lastName;
+    @Digits(integer = 1,fraction = 1, message = "Check your number format. Should have one decimal point")
+    @Min(value = 0,message = "Can not be less tha Zero")
+    @Max(value = 4,message = "Can not be more than 4")
+    private Double cgpa;
+    //    @NonNull@NotBlank@NotEmpty@Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate enrollmentDate;
-    @Column(name ="middle_Name", nullable = false)
-    private boolean isinternational;
+    //    @NonNull@NotBlank@NotEmpty@Column(nullable = false)
+    private String international;
 
-    public Student(){
-
+    public Student() {
     }
-    public Student(int studentNumber, String firstName, String middleName, String laastName, Double gpa,
-                   LocalDate enrollmentDate, boolean isinternational) {
-        this.studentNumber = studentNumber;
+
+    public Student(String studentNo, String firstName, String middleName, String lastName, Double cgpa, LocalDate enrollmentDate, String international) {
+        this.studentNo = studentNo;
         this.firstName = firstName;
         this.middleName = middleName;
-        this.laastName = laastName;
-        this.gpa = gpa;
+        this.lastName = lastName;
+        this.cgpa = cgpa;
         this.enrollmentDate = enrollmentDate;
-        this.isinternational = isinternational;
+        this.international = international;
     }
 
-    public Long getId() {
-        return id;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public int getStudentNumber() {
-        return studentNumber;
+    public Long getStudentId() {
+        return studentId;
     }
 
-    public void setStudentNumber(int studentNumber) {
-        this.studentNumber = studentNumber;
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getStudentNo() {
+        return studentNo;
+    }
+
+    public void setStudentNo(String studentNo) {
+        this.studentNo = studentNo;
     }
 
     public String getFirstName() {
@@ -74,20 +86,12 @@ public class Student {
         this.middleName = middleName;
     }
 
-    public String getLaastName() {
-        return laastName;
+    public Double getCgpa() {
+        return cgpa;
     }
 
-    public void setLaastName(String laastName) {
-        this.laastName = laastName;
-    }
-
-    public Double getGpa() {
-        return gpa;
-    }
-
-    public void setGpa(Double gpa) {
-        this.gpa = gpa;
+    public void setCgpa(Double cgpa) {
+        this.cgpa = cgpa;
     }
 
     public LocalDate getEnrollmentDate() {
@@ -98,11 +102,25 @@ public class Student {
         this.enrollmentDate = enrollmentDate;
     }
 
-    public boolean isIsinternational() {
-        return isinternational;
+    public String getInternational() {
+        return international;
     }
 
-    public void setIsinternational(boolean isinternational) {
-        this.isinternational = isinternational;
+    public void setInternational(String international) {
+        this.international = international;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentId=" + studentId +
+                ", studentNo='" + studentNo + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", cgpa=" + cgpa +
+                ", enrollmentDate=" + enrollmentDate +
+                ", international='" + international + '\'' +
+                '}';
     }
 }
+
