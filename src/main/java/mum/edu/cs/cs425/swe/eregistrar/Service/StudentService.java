@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 @Service
-public interface StudentService extends CrudRepository {
-    public abstract List<Student> getAllStudents();
+public interface StudentService  {
+    public abstract Page<Student> getAllStudents();
     Iterable<Student> getIAllStudents();
     Page<Student> getAllStudentsPaged(int pageNo);
+    public abstract Student getStudentById(Long id);
     Student saveStudent(Student student);
     void  deleteStudent(Long studentId);
     Student  findById(Long studentId);

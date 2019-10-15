@@ -21,7 +21,7 @@ public class Student {
     @NotBlank(message = "First name can not be blank")
     private String firstName;
     private String middleName;
-    @NotBlank(message = "Last Name can not be blank")
+    //@NotBlank(message = "Last Name can not be blank")
     private String lastName;
     @Digits(integer = 1,fraction = 1, message = "Check your number format. Should have one decimal point")
     @Min(value = 0,message = "Can not be less tha Zero")
@@ -117,6 +117,7 @@ public class Student {
                 ", studentNo='" + studentNo + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", cgpa=" + cgpa +
                 ", enrollmentDate=" + enrollmentDate +
                 ", international='" + international + '\'' +

@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public abstract class StudentServiceImp  implements StudentService {
+public  class StudentServiceImp  implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll(Sort.by("lastName"));
+    public Page<Student> getAllStudents() {
+        return (Page<Student>) studentRepository.findAll();
     }
 
     @Override
@@ -30,6 +30,11 @@ public abstract class StudentServiceImp  implements StudentService {
     @Override
     public Page<Student> getAllStudentsPaged(int pageNo) {
         return studentRepository.findAll(PageRequest.of(pageNo, 10, Sort.by("lastName")));
+    }
+
+    @Override
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).orElse(null);
     }
 
     @Override
